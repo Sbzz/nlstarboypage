@@ -5,18 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FBS StarBoy League - Dashboard</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.5;
             min-height: 100vh;
+            padding-bottom: 50px;
         }
 
         .container {
@@ -27,379 +33,203 @@
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            color: white;
+            margin-bottom: 25px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--card-border);
         }
 
         .header h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 2.2rem;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
         }
 
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+        .header p { color: var(--text-muted); font-size: 1.1rem; }
+
+        .scoring-info {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            font-size: 0.9rem;
         }
+        .scoring-info span { color: var(--text-muted); }
+        .scoring-info strong { color: var(--text-main); margin-right: 4px; }
 
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 25px;
             margin-bottom: 40px;
         }
 
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
         .dashboard-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
         .dashboard-title {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #333;
-            text-align: center;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
+            font-size: 1.4rem;
+            padding: 15px 20px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .leaderboard-section {
-            margin-top: 40px;
-        }
-
-        .leaderboard-title {
-            font-size: 2rem;
-            color: white;
-            text-align: center;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .leaderboard {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        .leaderboard-item {
+        .list-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-            transition: all 0.3s ease;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--card-border);
+            transition: background 0.2s;
         }
+        .list-item:hover { background: rgba(255,255,255,0.03); }
+        .list-item:last-child { border-bottom: none; }
 
-        .leaderboard-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 10px;
-            padding: 15px 10px;
-        }
-
-        .leaderboard-item:last-child {
-            border-bottom: none;
-        }
-
-        .rank-info {
+        .item-left { flex: 1; }
+        
+        .name-wrapper {
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex: 1;
+            gap: 12px;
+            margin-bottom: 6px;
         }
 
-        .rank-number {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .rank-num {
             font-weight: bold;
+            color: var(--text-muted);
+            width: 20px;
+        }
+
+        .primary-name {
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
         .rank-badge {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(0,0,0,0.05);
-            padding: 6px 12px;
-            border-radius: 20px;
+            gap: 6px;
+            background: rgba(0,0,0,0.3);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+        .expert-picks {
             font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            padding-left: 32px;
+        }
+
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding-left: 32px;
+        }
+        .stat-badge {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #cbd5e1;
             font-weight: 500;
         }
-
-        .rank-badge-icon {
-            font-size: 1.2rem;
-        }
-
-        .player-info {
-            flex: 1;
-        }
-
-        .player-name {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .player-stats {
-            font-size: 0.9rem;
-            color: #666;
-        }
+        
+        /* Custom Colors for specific stats */
+        .stat-badge.good { color: #4ade80; border-color: rgba(74, 222, 128, 0.2); }
+        .stat-badge.yc { color: #facc15; border-color: rgba(250, 204, 21, 0.3); } /* Bright Gold/Yellow */
+        .stat-badge.rc { color: #f87171; border-color: rgba(248, 113, 113, 0.3); } /* Sharp Red */
 
         .points {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #667eea;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fbbf24;
+            text-align: right;
+            min-width: 80px;
         }
-
-        .trophy, .star {
-            font-size: 1.5rem;
-            margin-right: 10px;
-        }
-
-        .expert-players {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .dashboard-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .dashboard-item:last-child {
-            border-bottom: none;
-        }
-
-        .dashboard-item-left {
-            flex: 1;
-        }
-
-        .scoring-info {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .scoring-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .scoring-item {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .rank-legend {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .rank-legend h3 {
-            text-align: center;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .rank-legend-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .rank-legend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid;
-        }
-
-        .rank-legend-icon {
-            font-size: 1.5rem;
-        }
-
-        .rank-legend-text {
-            flex: 1;
-        }
-
-        .rank-legend-title {
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .rank-legend-position {
+        .points span {
             font-size: 0.8rem;
-            color: #666;
+            color: var(--text-muted);
+            font-weight: normal;
         }
 
-        @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .container {
-                padding: 10px;
-            }
-
-            .rank-legend-grid {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>⚽ FBS StarBoy League ⚽</h1>
-            <p>NL Experts Championship Dashboard</p>
-        </div>
-
-        <div class="rank-legend">
-            <h3>🏆 Expert Rankings</h3>
-            <div class="rank-legend-grid">
-                <div class="rank-legend-item" style="border-color: #FFD700;">
-                    <div class="rank-legend-icon">🏆</div>
-                    <div class="rank-legend-text">
-                        <div class="rank-legend-title">Top Analyst</div>
-                        <div class="rank-legend-position">1st Place</div>
-                    </div>
-                </div>
-                <div class="rank-legend-item" style="border-color: #C0C0C0;">
-                    <div class="rank-legend-icon">⭐</div>
-                    <div class="rank-legend-text">
-                        <div class="rank-legend-title">Upcoming Analyst</div>
-                        <div class="rank-legend-position">2nd Place</div>
-                    </div>
-                </div>
-                <div class="rank-legend-item" style="border-color: #CD7F32;">
-                    <div class="rank-legend-icon">🔍</div>
-                    <div class="rank-legend-text">
-                        <div class="rank-legend-title">Scout</div>
-                        <div class="rank-legend-position">3rd Place</div>
-                    </div>
-                </div>
-                <div class="rank-legend-item" style="border-color: #667eea;">
-                    <div class="rank-legend-icon">📊</div>
-                    <div class="rank-legend-text">
-                        <div class="rank-legend-title">Pundit</div>
-                        <div class="rank-legend-position">4th Place</div>
-                    </div>
-                </div>
-                <div class="rank-legend-item" style="border-color: #764ba2;">
-                    <div class="rank-legend-icon">📈</div>
-                    <div class="rank-legend-text">
-                        <div class="rank-legend-title">Upcoming Pundit</div>
-                        <div class="rank-legend-position">5th Place</div>
-                    </div>
-                </div>
-                <div class="rank-legend-item" style="border-color: #FF6B6B;">
-                    <div class="rank-legend-icon">🍺</div>
-                    <div class="rank-legend-text">
-                        <div class="rank-legend-title">Beer Parlour Analyst</div>
-                        <div class="rank-legend-position">6th+ Place</div>
-                    </div>
-                </div>
-            </div>
+            <p>NL Experts Championship</p>
         </div>
 
         <div class="scoring-info">
-            <h3>Scoring System</h3>
-            <div class="scoring-grid">
-                <div class="scoring-item">
-                    <strong>NPG:</strong> 20 pts
-                </div>
-                <div class="scoring-item">
-                    <strong>PG:</strong> 15 pts
-                </div>
-                <div class="scoring-item">
-                    <strong>Assists:</strong> 10 pts
-                </div>
-                <div class="scoring-item">
-                    <strong>FMP:</strong> 5 pts
-                </div>
-                <div class="scoring-item">
-                    <strong>MOTM:</strong> 5 pts
-                </div>
-                <div class="scoring-item">
-                    <strong>YC:</strong> -5 pts
-                </div>
-                <div class="scoring-item">
-                    <strong>RC:</strong> -10 pts
-                </div>
+            <span><strong>NPG:</strong> 20</span>
+            <span><strong>PG:</strong> 15</span>
+            <span><strong>A:</strong> 10</span>
+            <span><strong>FMP:</strong> 5</span>
+            <span><strong>MOTM:</strong> 5</span>
+            <span><strong>YC:</strong> -5</span>
+            <span><strong>RC:</strong> -10</span>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h2 class="dashboard-title">🏆 Top 5 Experts</h2>
+                <div id="expert-dashboard"></div>
+            </div>
+
+            <div class="dashboard-card">
+                <h2 class="dashboard-title">⭐ Top 5 Players</h2>
+                <div id="player-dashboard"></div>
             </div>
         </div>
 
         <div class="dashboard-grid">
             <div class="dashboard-card">
-                <h2 class="dashboard-title">🏆 Expert Dashboard</h2>
-                <div id="expert-dashboard"></div>
+                <h2 class="dashboard-title">📋 Full Expert Leaderboard</h2>
+                <div id="expert-leaderboard"></div>
             </div>
 
             <div class="dashboard-card">
-                <h2 class="dashboard-title">⭐ Player Dashboard</h2>
-                <div id="player-dashboard"></div>
-            </div>
-        </div>
-
-        <div class="leaderboard-section">
-            <h2 class="leaderboard-title">Expert Leaderboard</h2>
-            <div class="leaderboard">
-                <div id="expert-leaderboard"></div>
-            </div>
-        </div>
-
-        <div class="leaderboard-section">
-            <h2 class="leaderboard-title">Player Leaderboard</h2>
-            <div class="leaderboard">
+                <h2 class="dashboard-title">📋 Full Player Leaderboard</h2>
                 <div id="player-leaderboard"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Player stats with calculated points
         const playerStats = {
         "Alex Baena": {
                 "NPG": 2,
                 "PG": 0,
-                "Assist": 1,
-                "FMP": 1,
+                "Assist": 2,
+                "FMP": 2,
                 "MOTM": 0,
                 "YC": 3,
                 "RC": 0,
-                "Total": 40
+                "Total": 55
         },
         "Alexander Isak": {
                 "NPG": 2,
@@ -435,41 +265,41 @@
                 "NPG": 3,
                 "PG": 0,
                 "Assist": 7,
-                "FMP": 2,
+                "FMP": 3,
                 "MOTM": 0,
                 "YC": 1,
                 "RC": 0,
-                "Total": 135
+                "Total": 140
         },
         "Benjamin Šeško": {
-                "NPG": 6,
+                "NPG": 7,
                 "PG": 0,
                 "Assist": 1,
                 "FMP": 6,
                 "MOTM": 1,
                 "YC": 1,
                 "RC": 0,
-                "Total": 160
+                "Total": 180
         },
         "Bradley Barcola": {
-                "NPG": 7,
+                "NPG": 9,
                 "PG": 0,
                 "Assist": 1,
-                "FMP": 3,
+                "FMP": 4,
                 "MOTM": 0,
                 "YC": 2,
                 "RC": 0,
-                "Total": 155
+                "Total": 200
         },
         "Bukayo Saka": {
-                "NPG": 3,
+                "NPG": 4,
                 "PG": 1,
                 "Assist": 3,
                 "FMP": 11,
-                "MOTM": 3,
+                "MOTM": 4,
                 "YC": 1,
                 "RC": 0,
-                "Total": 170
+                "Total": 195
         },
         "Cole Palmer": {
                 "NPG": 3,
@@ -502,14 +332,14 @@
                 "Total": 55
         },
         "Désiré Doué": {
-                "NPG": 3,
+                "NPG": 4,
                 "PG": 0,
                 "Assist": 2,
                 "FMP": 0,
                 "MOTM": 0,
                 "YC": 0,
                 "RC": 0,
-                "Total": 80
+                "Total": 100
         },
         "Eliesse Ben Seghir": {
                 "NPG": 0,
@@ -535,9 +365,9 @@
                 "NPG": 2,
                 "PG": 1,
                 "Assist": 1,
-                "FMP": 0,
+                "FMP": 1,
                 "MOTM": 2,
-                "YC": 0,
+                "YC": 1,
                 "RC": 1,
                 "Total": 65
         },
@@ -587,29 +417,29 @@
                 "Assist": 2,
                 "FMP": 0,
                 "MOTM": 0,
-                "YC": 0,
+                "YC": 1,
                 "RC": 0,
-                "Total": 20
+                "Total": 15
         },
         "João Pedro": {
-                "NPG": 10,
+                "NPG": 11,
                 "PG": 0,
                 "Assist": 4,
                 "FMP": 9,
                 "MOTM": 2,
                 "YC": 3,
                 "RC": 0,
-                "Total": 280
+                "Total": 300
         },
         "Jonathan Burkardt": {
                 "NPG": 7,
-                "PG": 1,
+                "PG": 2,
                 "Assist": 0,
                 "FMP": 1,
                 "MOTM": 3,
                 "YC": 1,
                 "RC": 0,
-                "Total": 170
+                "Total": 185
         },
         "Jonathan David": {
                 "NPG": 5,
@@ -632,24 +462,24 @@
                 "Total": 170
         },
         "Julián Álvarez": {
-                "NPG": 5,
+                "NPG": 6,
                 "PG": 2,
                 "Assist": 3,
                 "FMP": 5,
                 "MOTM": 3,
                 "YC": 2,
                 "RC": 0,
-                "Total": 190
+                "Total": 210
         },
         "Karim Adeyemi": {
                 "NPG": 5,
                 "PG": 0,
-                "Assist": 2,
+                "Assist": 3,
                 "FMP": 0,
                 "MOTM": 2,
                 "YC": 3,
                 "RC": 0,
-                "Total": 115
+                "Total": 125
         },
         "Kenan Yildiz": {
                 "NPG": 7,
@@ -672,14 +502,14 @@
                 "Total": 130
         },
         "Lamine Yamal": {
-                "NPG": 8,
+                "NPG": 11,
                 "PG": 2,
-                "Assist": 8,
-                "FMP": 12,
-                "MOTM": 6,
+                "Assist": 9,
+                "FMP": 13,
+                "MOTM": 7,
                 "YC": 0,
                 "RC": 0,
-                "Total": 360
+                "Total": 440
         },
         "Loïs Openda": {
                 "NPG": 1,
@@ -702,14 +532,14 @@
                 "Total": 20
         },
         "Mason Greenwood": {
-                "NPG": 8,
+                "NPG": 9,
                 "PG": 5,
                 "Assist": 4,
-                "FMP": 11,
-                "MOTM": 5,
+                "FMP": 13,
+                "MOTM": 6,
                 "YC": 2,
                 "RC": 0,
-                "Total": 345
+                "Total": 380
         },
         "Matías Soulé": {
                 "NPG": 6,
@@ -742,14 +572,14 @@
                 "Total": 65
         },
         "Moise Kean": {
-                "NPG": 5,
-                "PG": 1,
+                "NPG": 6,
+                "PG": 2,
                 "Assist": 1,
                 "FMP": 15,
                 "MOTM": 2,
                 "YC": 3,
                 "RC": 0,
-                "Total": 195
+                "Total": 230
         },
         "Mohammed Kudus": {
                 "NPG": 2,
@@ -765,11 +595,11 @@
                 "NPG": 8,
                 "PG": 0,
                 "Assist": 5,
-                "FMP": 23,
+                "FMP": 25,
                 "MOTM": 3,
                 "YC": 5,
                 "RC": 0,
-                "Total": 315
+                "Total": 325
         },
         "Nick Woltemade": {
                 "NPG": 6,
@@ -782,14 +612,14 @@
                 "Total": 175
         },
         "Nico Paz": {
-                "NPG": 8,
+                "NPG": 9,
                 "PG": 0,
                 "Assist": 6,
-                "FMP": 15,
-                "MOTM": 6,
-                "YC": 4,
+                "FMP": 16,
+                "MOTM": 7,
+                "YC": 5,
                 "RC": 0,
-                "Total": 305
+                "Total": 330
         },
         "Nico Williams": {
                 "NPG": 3,
@@ -805,31 +635,31 @@
                 "NPG": 7,
                 "PG": 0,
                 "Assist": 4,
-                "FMP": 2,
+                "FMP": 3,
                 "MOTM": 1,
                 "YC": 2,
                 "RC": 0,
-                "Total": 185
+                "Total": 190
         },
         "Nuno Mendez": {
                 "NPG": 3,
                 "PG": 0,
                 "Assist": 3,
-                "FMP": 8,
+                "FMP": 9,
                 "MOTM": 3,
                 "YC": 1,
                 "RC": 0,
-                "Total": 140
+                "Total": 145
         },
         "Oihan Sancet": {
                 "NPG": 0,
-                "PG": 1,
+                "PG": 2,
                 "Assist": 0,
                 "FMP": 2,
                 "MOTM": 0,
-                "YC": 2,
+                "YC": 3,
                 "RC": 1,
-                "Total": 5
+                "Total": 15
         },
         "Phil Foden": {
                 "NPG": 7,
@@ -857,23 +687,21 @@
                 "Assist": 3,
                 "FMP": 3,
                 "MOTM": 0,
-                "YC": 0,
+                "YC": 1,
                 "RC": 0,
-                "Total": 165
+                "Total": 160
         },
         "Vinícius Júnior": {
-                "NPG": 5,
-                "PG": 1,
+                "NPG": 6,
+                "PG": 3,
                 "Assist": 5,
-                "FMP": 9,
-                "MOTM": 2,
-                "YC": 5,
+                "FMP": 11,
+                "MOTM": 3,
+                "YC": 6,
                 "RC": 0,
-                "Total": 195
+                "Total": 255
         }
 };
-
-        // Expert selections with calculated totals and ranks
         const experts = [
         {
                 "expert": "iamoyindamola",
@@ -884,7 +712,7 @@
                         "Michael Olise",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 1540,
+                "totalPoints": 1680,
                 "rank": 1,
                 "rankInfo": {
                         "title": "Top Analyst",
@@ -901,7 +729,7 @@
                         "Michael Olise",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 1535,
+                "totalPoints": 1650,
                 "rank": 2,
                 "rankInfo": {
                         "title": "Upcoming Analyst",
@@ -918,29 +746,12 @@
                         "Michael Olise",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 1480,
+                "totalPoints": 1630,
                 "rank": 3,
                 "rankInfo": {
                         "title": "Scout",
                         "icon": "🔍",
                         "color": "#CD7F32"
-                }
-        },
-        {
-                "expert": "Skimpledawg",
-                "players": [
-                        "Estêvão Willian",
-                        "Lamine Yamal",
-                        "Kenan Yildiz",
-                        "Michael Olise",
-                        "Mason Greenwood"
-                ],
-                "totalPoints": 1420,
-                "rank": 4,
-                "rankInfo": {
-                        "title": "Pundit",
-                        "icon": "📊",
-                        "color": "#667eea"
                 }
         },
         {
@@ -952,7 +763,24 @@
                         "Michael Olise",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 1415,
+                "totalPoints": 1550,
+                "rank": 4,
+                "rankInfo": {
+                        "title": "Pundit",
+                        "icon": "📊",
+                        "color": "#667eea"
+                }
+        },
+        {
+                "expert": "Skimpledawg",
+                "players": [
+                        "Estêvão Willian",
+                        "Lamine Yamal",
+                        "Kenan Yildiz",
+                        "Michael Olise",
+                        "Mason Greenwood"
+                ],
+                "totalPoints": 1535,
                 "rank": 5,
                 "rankInfo": {
                         "title": "Upcoming Pundit",
@@ -969,10 +797,10 @@
                         "Michael Olise",
                         "Désiré Doué"
                 ],
-                "totalPoints": 1385,
+                "totalPoints": 1505,
                 "rank": 6,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -986,95 +814,10 @@
                         "Michael Olise",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 1370,
+                "totalPoints": 1465,
                 "rank": 7,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
-                        "icon": "🍺",
-                        "color": "#FF6B6B"
-                }
-        },
-        {
-                "expert": "drisham",
-                "players": [
-                        "Cole Palmer",
-                        "Arda Güler",
-                        "Kenan Yildiz",
-                        "Michael Olise",
-                        "Mason Greenwood"
-                ],
-                "totalPoints": 1310,
-                "rank": 8,
-                "rankInfo": {
-                        "title": "Beer Parlour Analyst",
-                        "icon": "🍺",
-                        "color": "#FF6B6B"
-                }
-        },
-        {
-                "expert": "timbros",
-                "players": [
-                        "Morgan Rogers",
-                        "Julián Álvarez",
-                        "Kenan Yildiz",
-                        "Michael Olise",
-                        "Khvicha Kvaratskhelia"
-                ],
-                "totalPoints": 1300,
-                "rank": 9,
-                "rankInfo": {
-                        "title": "Beer Parlour Analyst",
-                        "icon": "🍺",
-                        "color": "#FF6B6B"
-                }
-        },
-        {
-                "expert": "Whizlight",
-                "players": [
-                        "Cole Palmer",
-                        "Lamine Yamal",
-                        "Kenan Yildiz",
-                        "Michael Olise",
-                        "Désiré Doué"
-                ],
-                "totalPoints": 1270,
-                "rank": 10,
-                "rankInfo": {
-                        "title": "Beer Parlour Analyst",
-                        "icon": "🍺",
-                        "color": "#FF6B6B"
-                }
-        },
-        {
-                "expert": "Dathypebruv",
-                "players": [
-                        "Cole Palmer",
-                        "Lamine Yamal",
-                        "Kenan Yildiz",
-                        "Michael Olise",
-                        "Désiré Doué"
-                ],
-                "totalPoints": 1270,
-                "rank": 11,
-                "rankInfo": {
-                        "title": "Beer Parlour Analyst",
-                        "icon": "🍺",
-                        "color": "#FF6B6B"
-                }
-        },
-        {
-                "expert": "Gucciboy",
-                "players": [
-                        "Cole Palmer",
-                        "Julián Álvarez",
-                        "Ange-Yoan Bonny",
-                        "Michael Olise",
-                        "Mason Greenwood"
-                ],
-                "totalPoints": 1250,
-                "rank": 12,
-                "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1088,10 +831,44 @@
                         "Nick Woltemade",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 1245,
-                "rank": 13,
+                "totalPoints": 1420,
+                "rank": 8,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
+                        "icon": "🍺",
+                        "color": "#FF6B6B"
+                }
+        },
+        {
+                "expert": "Whizlight",
+                "players": [
+                        "Cole Palmer",
+                        "Lamine Yamal",
+                        "Kenan Yildiz",
+                        "Michael Olise",
+                        "Désiré Doué"
+                ],
+                "totalPoints": 1370,
+                "rank": 9,
+                "rankInfo": {
+                        "title": "VCE",
+                        "icon": "🍺",
+                        "color": "#FF6B6B"
+                }
+        },
+        {
+                "expert": "Dathypebruv",
+                "players": [
+                        "Cole Palmer",
+                        "Lamine Yamal",
+                        "Kenan Yildiz",
+                        "Michael Olise",
+                        "Désiré Doué"
+                ],
+                "totalPoints": 1370,
+                "rank": 10,
+                "rankInfo": {
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1105,10 +882,27 @@
                         "Michael Olise",
                         "Bradley Barcola"
                 ],
-                "totalPoints": 1230,
-                "rank": 14,
+                "totalPoints": 1355,
+                "rank": 11,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
+                        "icon": "🍺",
+                        "color": "#FF6B6B"
+                }
+        },
+        {
+                "expert": "drisham",
+                "players": [
+                        "Cole Palmer",
+                        "Arda Güler",
+                        "Kenan Yildiz",
+                        "Michael Olise",
+                        "Mason Greenwood"
+                ],
+                "totalPoints": 1350,
+                "rank": 12,
+                "rankInfo": {
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1122,10 +916,44 @@
                         "Michael Olise",
                         "Désiré Doué"
                 ],
-                "totalPoints": 1215,
+                "totalPoints": 1350,
+                "rank": 13,
+                "rankInfo": {
+                        "title": "VCE",
+                        "icon": "🍺",
+                        "color": "#FF6B6B"
+                }
+        },
+        {
+                "expert": "timbros",
+                "players": [
+                        "Morgan Rogers",
+                        "Julián Álvarez",
+                        "Kenan Yildiz",
+                        "Michael Olise",
+                        "Khvicha Kvaratskhelia"
+                ],
+                "totalPoints": 1330,
+                "rank": 14,
+                "rankInfo": {
+                        "title": "VCE",
+                        "icon": "🍺",
+                        "color": "#FF6B6B"
+                }
+        },
+        {
+                "expert": "Gucciboy",
+                "players": [
+                        "Cole Palmer",
+                        "Julián Álvarez",
+                        "Ange-Yoan Bonny",
+                        "Michael Olise",
+                        "Mason Greenwood"
+                ],
+                "totalPoints": 1305,
                 "rank": 15,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1139,27 +967,10 @@
                         "Loïs Openda",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 1150,
+                "totalPoints": 1290,
                 "rank": 16,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
-                        "icon": "🍺",
-                        "color": "#FF6B6B"
-                }
-        },
-        {
-                "expert": "Amoto94",
-                "players": [
-                        "Cole Palmer",
-                        "Endrick Felipe",
-                        "Ange-Yoan Bonny",
-                        "Michael Olise",
-                        "Mason Greenwood"
-                ],
-                "totalPoints": 1125,
-                "rank": 17,
-                "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1173,10 +984,10 @@
                         "Nick Woltemade",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 1125,
-                "rank": 18,
+                "totalPoints": 1260,
+                "rank": 17,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1190,10 +1001,10 @@
                         "Loïs Openda",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 1070,
-                "rank": 19,
+                "totalPoints": 1210,
+                "rank": 18,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1207,10 +1018,27 @@
                         "Nick Woltemade",
                         "Désiré Doué"
                 ],
-                "totalPoints": 1060,
+                "totalPoints": 1180,
+                "rank": 19,
+                "rankInfo": {
+                        "title": "VCE",
+                        "icon": "🍺",
+                        "color": "#FF6B6B"
+                }
+        },
+        {
+                "expert": "Amoto94",
+                "players": [
+                        "Cole Palmer",
+                        "Endrick Felipe",
+                        "Ange-Yoan Bonny",
+                        "Michael Olise",
+                        "Mason Greenwood"
+                ],
+                "totalPoints": 1160,
                 "rank": 20,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1224,27 +1052,10 @@
                         "Michael Olise",
                         "Bradley Barcola"
                 ],
-                "totalPoints": 1020,
+                "totalPoints": 1065,
                 "rank": 21,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
-                        "icon": "🍺",
-                        "color": "#FF6B6B"
-                }
-        },
-        {
-                "expert": "Zeusis",
-                "players": [
-                        "Cole Palmer",
-                        "Julián Álvarez",
-                        "Charles De Ketelaere",
-                        "Michael Olise",
-                        "Désiré Doué"
-                ],
-                "totalPoints": 985,
-                "rank": 22,
-                "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1258,27 +1069,10 @@
                         "Jonathan Burkardt",
                         "Désiré Doué"
                 ],
-                "totalPoints": 940,
-                "rank": 23,
+                "totalPoints": 1055,
+                "rank": 22,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
-                        "icon": "🍺",
-                        "color": "#FF6B6B"
-                }
-        },
-        {
-                "expert": "Kushercain",
-                "players": [
-                        "Estêvão Willian",
-                        "Arda Güler",
-                        "Kenan Yildiz",
-                        "Michael Olise",
-                        "Désiré Doué"
-                ],
-                "totalPoints": 930,
-                "rank": 24,
-                "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1292,10 +1086,27 @@
                         "Jamal Musiala",
                         "Nuno Mendez"
                 ],
-                "totalPoints": 930,
-                "rank": 25,
+                "totalPoints": 1030,
+                "rank": 23,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
+                        "icon": "🍺",
+                        "color": "#FF6B6B"
+                }
+        },
+        {
+                "expert": "Zeusis",
+                "players": [
+                        "Cole Palmer",
+                        "Julián Álvarez",
+                        "Charles De Ketelaere",
+                        "Michael Olise",
+                        "Désiré Doué"
+                ],
+                "totalPoints": 1025,
+                "rank": 24,
+                "rankInfo": {
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1309,10 +1120,10 @@
                         "Jonathan Burkardt",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 890,
-                "rank": 26,
+                "totalPoints": 990,
+                "rank": 25,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1326,10 +1137,27 @@
                         "Karim Adeyemi",
                         "Désiré Doué"
                 ],
-                "totalPoints": 855,
+                "totalPoints": 965,
+                "rank": 26,
+                "rankInfo": {
+                        "title": "VCE",
+                        "icon": "🍺",
+                        "color": "#FF6B6B"
+                }
+        },
+        {
+                "expert": "Kushercain",
+                "players": [
+                        "Estêvão Willian",
+                        "Arda Güler",
+                        "Kenan Yildiz",
+                        "Michael Olise",
+                        "Désiré Doué"
+                ],
+                "totalPoints": 955,
                 "rank": 27,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1343,10 +1171,10 @@
                         "Michael Olise",
                         "Mika Biereth"
                 ],
-                "totalPoints": 835,
+                "totalPoints": 895,
                 "rank": 28,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1360,10 +1188,10 @@
                         "Loïs Openda",
                         "Mason Greenwood"
                 ],
-                "totalPoints": 830,
+                "totalPoints": 885,
                 "rank": 29,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1377,10 +1205,10 @@
                         "Michael Olise",
                         "Désiré Doué"
                 ],
-                "totalPoints": 820,
+                "totalPoints": 840,
                 "rank": 30,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1394,10 +1222,10 @@
                         "Rómulo Cardoso",
                         "Bradley Barcola"
                 ],
-                "totalPoints": 685,
+                "totalPoints": 770,
                 "rank": 31,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
@@ -1414,108 +1242,63 @@
                 "totalPoints": 685,
                 "rank": 32,
                 "rankInfo": {
-                        "title": "Beer Parlour Analyst",
+                        "title": "VCE",
                         "icon": "🍺",
                         "color": "#FF6B6B"
                 }
         }
 ];
 
-        // Create sorted player array
         const players = Object.entries(playerStats).map(([name, stats]) => ({
-            name,
-            ...stats
+            name, ...stats
         })).sort((a, b) => b.Total - a.Total);
 
-        // Populate Expert Dashboard (Top 5)
-        const expertDashboard = document.getElementById('expert-dashboard');
-        experts.slice(0, 5).forEach((expert, index) => {
+        function renderExpert(expert, index) {
             const playersText = expert.players.join(', ');
-            const rankInfo = expert.rankInfo;
-            expertDashboard.innerHTML += `
-                <div class="dashboard-item">
-                    <div class="dashboard-item-left">
-                        <div class="player-name">
-                            ${expert.expert}
+            const rInfo = expert.rankInfo;
+            return `
+                <div class="list-item">
+                    <div class="item-left">
+                        <div class="name-wrapper">
+                            <span class="rank-num">${index + 1}.</span>
+                            <span class="primary-name">${expert.expert}</span>
+                            <div class="rank-badge" style="border-left: 3px solid ${rInfo.color};">
+                                <span>${rInfo.icon} ${rInfo.title}</span>
+                            </div>
                         </div>
-                        <div class="rank-badge" style="border-left: 3px solid ${rankInfo.color};">
-                            <span class="rank-badge-icon">${rankInfo.icon}</span>
-                            <span>${rankInfo.title}</span>
-                        </div>
-                        <div class="expert-players">${playersText}</div>
+                        <div class="expert-picks">${playersText}</div>
                     </div>
-                    <div class="points">${expert.totalPoints}</div>
-                </div>
-            `;
-        });
+                    <div class="points">${expert.totalPoints} <span>pts</span></div>
+                </div>`;
+        }
 
-        // Populate Player Dashboard (Top 5 players with points)
-        const playerDashboard = document.getElementById('player-dashboard');
-        const topPlayers = players.filter(p => p.Total > 0).slice(0, 5);
-        topPlayers.forEach((player, index) => {
-            const isTop = index === 0;
-            playerDashboard.innerHTML += `
-                <div class="dashboard-item">
-                    <div>
-                        <div class="player-name">
-                            ${isTop ? '⭐ ' : ''}${player.name}
+        function renderPlayer(player, index) {
+            return `
+                <div class="list-item">
+                    <div class="item-left">
+                        <div class="name-wrapper">
+                            <span class="rank-num">${index + 1}.</span>
+                            <span class="primary-name">${player.name}</span>
                         </div>
-                        <div class="player-stats">
-                            NPG: ${player.NPG} | PG: ${player.PG} | Assist: ${player.Assist} | MOTM: ${player.MOTM} | FMP: ${player.FMP} | YC: ${player.YC} | RC: ${player.RC}
+                        <div class="stats-row">
+                            <span class="stat-badge good">NPG: ${player.NPG}</span>
+                            <span class="stat-badge good">PG: ${player.PG}</span>
+                            <span class="stat-badge good">A: ${player.Assist}</span>
+                            <span class="stat-badge">MOTM: ${player.MOTM}</span>
+                            <span class="stat-badge">FMP: ${player.FMP}</span>
+                            <span class="stat-badge yc">YC: ${player.YC}</span>
+                            <span class="stat-badge rc">RC: ${player.RC}</span>
                         </div>
                     </div>
-                    <div class="points">${player.Total}</div>
-                </div>
-            `;
-        });
+                    <div class="points">${player.Total} <span>pts</span></div>
+                </div>`;
+        }
 
-        // Populate Expert Leaderboard (All experts)
-        const expertLeaderboard = document.getElementById('expert-leaderboard');
-        experts.forEach((expert, index) => {
-            const playersText = expert.players.join(', ');
-            const rankInfo = expert.rankInfo;
-            expertLeaderboard.innerHTML += `
-                <div class="leaderboard-item">
-                    <div class="rank-info">
-                        <div class="rank-number">${index + 1}</div>
-                        <div class="player-info">
-                            <div class="player-name">
-                                ${expert.expert}
-                            </div>
-                            <div class="rank-badge" style="border-left: 3px solid ${rankInfo.color};">
-                                <span class="rank-badge-icon">${rankInfo.icon}</span>
-                                <span>${rankInfo.title}</span>
-                            </div>
-                            <div class="expert-players">Players: ${playersText}</div>
-                        </div>
-                    </div>
-                    <div class="points">${expert.totalPoints} pts</div>
-                </div>
-            `;
-        });
+        document.getElementById('expert-dashboard').innerHTML = experts.slice(0, 5).map(renderExpert).join('');
+        document.getElementById('player-dashboard').innerHTML = players.filter(p => p.Total > 0).slice(0, 5).map(renderPlayer).join('');
 
-        // Populate Player Leaderboard (Only players with points > 0)
-        const playerLeaderboard = document.getElementById('player-leaderboard');
-        const playersWithPoints = players.filter(p => p.Total > 0);
-        playersWithPoints.forEach((player, index) => {
-            const isTop = index === 0;
-            playerLeaderboard.innerHTML += `
-                <div class="leaderboard-item">
-                    <div class="rank-info">
-                        <div class="rank-number">${index + 1}</div>
-                        <div class="player-info">
-                            <div class="player-name">
-                                ${isTop ? '⭐ ' : ''}${player.name}
-                            </div>
-                            <div class="player-stats">
-                                NPG: ${player.NPG} | PG: ${player.PG} | Assist: ${player.Assist} | MOTM: ${player.MOTM} | FMP: ${player.FMP} | YC: ${player.YC} | RC: ${player.RC}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="points">${player.Total} pts</div>
-                </div>
-            `;
-        });
+        document.getElementById('expert-leaderboard').innerHTML = experts.map(renderExpert).join('');
+        document.getElementById('player-leaderboard').innerHTML = players.filter(p => p.Total > 0).map(renderPlayer).join('');
     </script>
 </body>
 </html>
